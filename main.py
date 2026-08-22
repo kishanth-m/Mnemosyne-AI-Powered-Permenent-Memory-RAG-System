@@ -1,5 +1,5 @@
 def main():
-    print("Hello from rag-with-postgresql!")
+    print("Hello from Kishanth Projects!")
 
 
 if __name__ == "__main__":
