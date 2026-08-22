@@ -61,70 +61,21 @@ Optional text-to-speech via Piper TTS reads the assistant's last response aloud 
 
 From uploading a PDF to getting a spoken-ready answer, this is the full path a question takes through the system:
 
-<svg width="100%" viewBox="0 0 680 700" xmlns="http://www.w3.org/2000/svg" role="img">
-<title>Mnemosyne end-to-end workflow</title>
-<desc>A PDF is loaded, chunked and embedded into ChromaDB. When a user asks a question, the agent either retrieves relevant chunks from ChromaDB or answers directly, calls the LLM, and saves the exchange to PostgreSQL memory.</desc>
-<defs>
-<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-<path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</marker>
-</defs>
+```mermaid
+flowchart TD
+    A[Upload PDF]:::start --> B[Load, split & embed]:::process
+    B --> C[(ChromaDB<br/>vector store)]:::store
+    D[User asks a question]:::start --> E{Agent}:::agent
+    E -- retrieves chunks --> C
+    E <--> F[(PostgreSQL<br/>memory)]:::process
+    E --> G[LLM generates answer<br/>Ollama or Groq]:::process
+    G --> H[Response delivered]:::start
 
-<!-- n1 Upload PDF -->
-<rect x="190" y="20" width="300" height="56" rx="10" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
-<text x="340" y="40" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#444441">Upload PDF</text>
-<text x="340" y="58" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#5F5E5A">User provides a document</text>
-<line x1="340" y1="76" x2="340" y2="116" stroke="#5F5E5A" stroke-width="1" marker-end="url(#arrow)"/>
-
-<!-- n2 Load, split, embed -->
-<rect x="190" y="116" width="300" height="56" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
-<text x="340" y="136" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#085041">Load, split &amp; embed</text>
-<text x="340" y="154" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#0F6E56">Extract text, chunk, embed</text>
-<line x1="340" y1="172" x2="340" y2="212" stroke="#5F5E5A" stroke-width="1" marker-end="url(#arrow)"/>
-
-<!-- n3 ChromaDB -->
-<rect x="190" y="212" width="300" height="56" rx="10" fill="#FAECE7" stroke="#993C1D" stroke-width="0.5"/>
-<text x="340" y="232" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#712B13">ChromaDB</text>
-<text x="340" y="250" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#993C1D">Persistent vector store</text>
-<line x1="340" y1="268" x2="340" y2="308" stroke="#5F5E5A" stroke-width="1" marker-end="url(#arrow)"/>
-
-<!-- n4 User asks a question -->
-<rect x="190" y="308" width="300" height="56" rx="10" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
-<text x="340" y="328" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#444441">User asks a question</text>
-<text x="340" y="346" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#5F5E5A">Sent to the agent</text>
-<line x1="340" y1="364" x2="340" y2="404" stroke="#5F5E5A" stroke-width="1" marker-end="url(#arrow)"/>
-
-<!-- n5 Agent -->
-<rect x="190" y="404" width="300" height="56" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
-<text x="340" y="424" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#3C3489">Agent (LangChain)</text>
-<text x="340" y="442" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#534AB7">Retrieves or answers directly</text>
-
-<!-- feedback path: Agent -> ChromaDB (retrieval) -->
-<path d="M190 432 L110 432 L110 240 L190 240" fill="none" stroke="#5F5E5A" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
-<text text-anchor="end" font-family="sans-serif" font-size="12" fill="#5F5E5A">
-<tspan x="100" y="318">Retrieves</tspan>
-<tspan x="100" y="332">chunks</tspan>
-</text>
-
-<!-- Agent <-> PostgreSQL -->
-<line x1="490" y1="432" x2="515" y2="432" stroke="#5F5E5A" stroke-width="1" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
-<rect x="515" y="412" width="120" height="40" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
-<text x="575" y="426" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#085041">PostgreSQL</text>
-<text x="575" y="441" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#0F6E56">Memory</text>
-
-<line x1="340" y1="460" x2="340" y2="500" stroke="#5F5E5A" stroke-width="1" marker-end="url(#arrow)"/>
-
-<!-- n6 LLM -->
-<rect x="190" y="500" width="300" height="56" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
-<text x="340" y="520" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#085041">LLM generates answer</text>
-<text x="340" y="538" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#0F6E56">Ollama (local) or Groq (cloud)</text>
-<line x1="340" y1="556" x2="340" y2="596" stroke="#5F5E5A" stroke-width="1" marker-end="url(#arrow)"/>
-
-<!-- n7 Response -->
-<rect x="190" y="596" width="300" height="56" rx="10" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
-<text x="340" y="616" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#444441">Response delivered</text>
-<text x="340" y="634" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#5F5E5A">Saved to conversation memory</text>
-</svg>
+    classDef start fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A;
+    classDef process fill:#E1F5EE,stroke:#0F6E56,color:#085041;
+    classDef store fill:#FAECE7,stroke:#993C1D,color:#712B13;
+    classDef agent fill:#EEEDFE,stroke:#534AB7,color:#3C3489;
+```
 
 ---
 
@@ -174,7 +125,7 @@ Mnemosyne/
 ### 1. Clone and install
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
+git clone https://github.com/kishanth-m/Mnemosyne-AI.git
 cd Mnemosyne
 uv sync
 ```
