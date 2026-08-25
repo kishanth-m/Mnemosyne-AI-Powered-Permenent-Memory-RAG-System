@@ -87,17 +87,23 @@ def search_pdf(query: str) -> str:
     )
 
 # online groq llm creation
-llm = ChatGroq(
-    model="openai/gpt-oss-safeguard-20b",
-    temperature=0,
-    groq_api_key=api
-)
+# llm = ChatGroq(
+#     model="openai/gpt-oss-safeguard-20b",
+#     temperature=0,
+#     groq_api_key=api
+# )
 
-# local llm without internet
+# local llm without internet(llama3.2)
 # llm = ChatOllama(
 #     model = "llama3.2",
 #     temperature = 0
 # )
+# local llm without internet(qwen3:4b)
+llm = ChatOllama(
+    model = "qwen3:4b",
+    temperature = 0,
+    top_k=40
+)
 
 # memory creation & Setup checkpointer for conversation persistence
 
