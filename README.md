@@ -245,6 +245,11 @@ None of the following is built yet — these are directions the project could gr
 - RAG evaluation and observability tooling
 
 ---
+## Collaboration 
+
+Pair programming with Spartanz.
+
+---
 
 ## About
 
