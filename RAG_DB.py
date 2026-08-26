@@ -8,6 +8,7 @@ from langchain_ollama import ChatOllama
 from langchain.tools import tool
 from langgraph.checkpoint.postgres import PostgresSaver
 from dotenv import load_dotenv
+import models
 import os
 import speak
 import path
@@ -99,8 +100,10 @@ def search_pdf(query: str) -> str:
 #     temperature = 0
 # )
 # local llm without internet(qwen3:4b)
+selected_model = "llama3.2"
+
 llm = ChatOllama(
-    model = "qwen3:4b",
+    model = f"{selected_model}",
     temperature = 0,
     top_k=40
 )
@@ -147,6 +150,8 @@ with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
 
         if question.lower() == "/bye":
             break
+        if question.lower()=="/models":
+            selected_model = models.mod()
         if question.lower() == "/upload":
             chunked_data = path.get_project_path()
             if chunked_data:
@@ -172,4 +177,4 @@ with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
 
         Last_answer = response["messages"][-1].content
         # print output
-        print("\nMnemosyne:",Last_answer)
+        print(f"\nMnemosyne({selected_model}):",Last_answer)
