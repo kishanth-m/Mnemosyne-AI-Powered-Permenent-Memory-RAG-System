@@ -178,7 +178,9 @@ uv run RAG_DB.py
 | --------- | ----------------------------------- |
 | `/upload` | Upload and embed a new PDF          |
 | `/speak`  | Read the last response aloud        |
-| `/bye`    | Exit                                 |
+| `/bye`    | Exit                                |
+| `/models` | switch models                       |
+
 
 ---
 
