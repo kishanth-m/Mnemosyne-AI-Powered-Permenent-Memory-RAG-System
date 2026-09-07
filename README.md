@@ -203,6 +203,12 @@ Mnemosyne: Your name is Kishanth.
 
 ---
 
+## Demo
+
+![Demo screenshot](images/Demo_Screenshot.png)
+
+---
+
 ## Security & Privacy
 
 Mnemosyne is built local-first: your documents, embeddings, and conversation history stay on infrastructure you control. Secrets are loaded from environment variables and never hardcoded.
